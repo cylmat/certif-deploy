@@ -1,0 +1,23 @@
+# kong-ingress.yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+ name: <your-ingress-name>
+ namespace: <your-namespace>
+ annotations:
+   konghq.com/strip-path: "false"
+   konghq.com/plugins: <auth-plugin-name>, <ratelimit-plugin-name>    # Plugin names referenced in KongPlugin resources
+   kubernetes.io/ingress.class: kong
+   konghq.com/methods: "GET, POST"  
+spec:
+ ingressClassName: kong
+ rules:
+   - http:
+       paths:
+         - path: /
+           pathType: Prefix
+           backend:
+             service:
+               name: <your-service-name>   # Name of your K8s Service
+               port:
+                 number: <service-port>    # Port exposed by your Service

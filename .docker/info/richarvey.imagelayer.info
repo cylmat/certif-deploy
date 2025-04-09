@@ -1,0 +1,55 @@
+ADD file ... in /
+CMD ["/bin/sh"]
+ENV PHPIZE_DEPS=autoconf dpkg-dev dpkg
+/bin/sh -c apk add --no-cache
+/bin/sh -c set -x &&
+ENV PHP_INI_DIR=/usr/local/etc/php
+/bin/sh -c mkdir -p $PHP_INI_DIR/conf.d
+ENV PHP_EXTRA_CONFIGURE_ARGS=--enable-fpm --with-fpm-user=www-data --with-fpm-group=www-data
+ENV PHP_CFLAGS=-fstack-protector-strong -fpic -fpie
+ENV PHP_CPPFLAGS=-fstack-protector-strong -fpic -fpie
+ENV PHP_LDFLAGS=-Wl,-O1 -Wl,--hash-style=both -pie
+ENV GPG_KEYS=A917B1ECDA84AEC2B568FED6F50ABC807BD5DCD0 528995BFEDFBA7191D46839EF9BA0ADA31CBD89E
+ENV PHP_VERSION=7.1.11
+ENV PHP_URL=https://secure.php.net/get/php-7.1.11.tar.xz/from/this/mirror PHP_ASC_URL=https://secure.php.net/get/php-7.1.11.tar.xz.asc/from/this/mirror
+ENV PHP_SHA256=074093e9d7d21afedc5106904218a80a47b854abe368d2728ed22184c884893e PHP_MD5=
+/bin/sh -c set -xe; apk
+COPY file:207c686e3fed4f71f8a7b245d8dcae9c9048d276a326d82b553c12a90af0c0ca in /usr/local/bin/
+/bin/sh -c set -xe &&
+COPY multi:3a3ce8aa3891c64454909e9f8257446a1817abe660b49a7baaa26f28bfdc444d in /usr/local/bin/
+ENTRYPOINT ["docker-php-entrypoint"]
+WORKDIR /var/www/html
+/bin/sh -c set -ex &&
+EXPOSE 9000/tcp
+CMD ["php-fpm"]
+LABEL maintainer=Ric Harvey <ric@ngd.io>
+ENV php_conf=/usr/local/etc/php-fpm.conf
+ENV fpm_conf=/usr/local/etc/php-fpm.d/www.conf
+ENV php_vars=/usr/local/etc/php/conf.d/docker-vars.ini
+ENV NGINX_VERSION=1.13.7
+ENV LUA_MODULE_VERSION=0.10.10
+ENV DEVEL_KIT_MODULE_VERSION=0.3.0
+ENV LUAJIT_LIB=/usr/lib
+ENV LUAJIT_INC=/usr/include/luajit-2.0
+ENV LD_PRELOAD=/usr/lib/preloadable_libiconv.so php
+/bin/sh -c apk add --no-cache
+/bin/sh -c GPG_KEYS=B0F4253373F8F6F510D42178520A9993A1C052F8
+/bin/sh -c echo @testing http://nl.alpinelinux.org/alpine/edge/testing
+ADD file ... in /etc/supervisord.conf
+/bin/sh -c rm -Rf /etc/nginx/nginx.conf
+ADD file ... in /etc/nginx/nginx.conf
+/bin/sh -c mkdir -p /etc/nginx/sites-available/
+ADD file ... in /etc/nginx/sites-available/default.conf
+ADD file ... in /etc/nginx/sites-available/default-ssl.conf
+/bin/sh -c ln -s /etc/nginx/sites-available/default.conf
+/bin/sh -c echo "cgi.fix_pathinfo=0" >
+ADD file ... in /start.sh
+ADD file ... in /usr/bin/pull
+ADD file ... in /usr/bin/push
+ADD file ... in /usr/bin/letsencrypt-setup
+ADD file ... in /usr/bin/letsencrypt-renew
+/bin/sh -c chmod 755 /usr/bin/pull
+ADD dir:644d8599c454d4e49cc10cd2fb5e0e178e8af2aa51c26699fff787eed99a7b17 in /var/www/html/
+ADD dir:54ac8d45d94219bcddc1a54e9f729ae787eb45d235aa13c393dfda23b544f530 in /var/www/errors
+EXPOSE 443/tcp 80/tcp
+CMD ["/start.sh"]

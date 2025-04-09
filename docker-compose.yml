@@ -1,4 +1,15 @@
 services:
-    
-    app:
-        image: php:8-apache
+
+  app:
+    # https://github.com/richarvey/nginx-php-fpm/blob/main/Dockerfile
+    # image: richarvey/nginx-php-fpm
+    image: php:8.3-apache
+    restart: always
+    environment:
+      # Set domain for let's encrypt
+      DOMAIN: mydomain
+      PGID: ${PGID}
+      PUID: ${PUID}
+      SCRIPT_DIR: /var/www/html/scripts
+      SSH_KEY: 'sdfgsdfgsfdgsfdgsdgf'
+      WEBROOT: /var/www/html
