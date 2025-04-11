@@ -8,40 +8,44 @@
 ```
 minikube delete && minikube start
 minikube dashboard (in other terminal) 
-(kubectl config get-contexts)
-
-kubectl create deployment hello-node --image=registry.k8s.io/e2e-test-images/agnhost:2.39 -- /agnhost netexec --http-port=8080
-kubectl get deploy,pods,events -n kube-system
+kubectl config view
 ```
 
-**Setup**
+**Deploy**
 ```
 kubectl create deployment hello-minikube --image=kicbase/echo-server:1.0
 kubectl expose deployment hello-minikube --type=NodePort --port=8080     (or --type=LoadBalancer)
 
-kubectl get services hello-minikube
-(kubectl get deploy,pods,events -n kube-system)
+kubectl get deploy,events -n kube-system
+```
+
+**Make the node Container accessible from outside: Proxy or service**  
+
+**Proxy**
+```
+kubectl proxy -p 8050 (in other terminal) 
+curl http://127.0.0.1:8050/version
+
+kubectl get pods -o json | jq '.items[0].metadata.name'
+export POD_NAME=$(kubectl get pods -o go-template --template '{{range .items}}{{.metadata.name}}{{"\n"}}{{end}}')
+curl http://localhost:8050/api/v1/namespaces/default/pods/$POD_NAME:8080/proxy/
 ```
 
 **Use service (provide IP)**
-**Make the node Container accessible from outside**
 ```
 minikube service hello-minikube
-kubectl get services     (kubectl get svc)
-(kubectl describe services hello-minikube)
-(kubectl get pods -A)
-(kubectl get pods -l "app=hello-minikube")
+kubectl get services hello-minikube
+kubectl describe services hello-minikube
 ```
 
-**Run**
+**Port-forward on local**
 ```
 kubectl port-forward service/hello-minikube 7080:8080
 http://localhost:7080
 ```
 
-**Setup**
+**Addons**
 ```
-kubectl config view
 minikube addons list
 minikube addons enable metrics-server
 ```
@@ -57,6 +61,7 @@ minikube stop    (minikube delete)
 
 - A Pod is a group of one or more Containers.
 - kubectl <action> <resource>
+- kubectl create/describe/delete node/deployment/service
 
 - Node: Physical/VM server (resources: processor, memory...)
     - Pod1: Logical isolation (e.g. client 1)
@@ -67,6 +72,19 @@ minikube stop    (minikube delete)
         - Container App
         - Container Database
         - ...
+
+**Actions**
+```
+kubectl config get-contexts
+kubectl get nodes
+kubectl get pods -A
+kubectl get pods -l "app=hello-minikube"
+kubectl get svc  (services)
+kubectl get deploy,pods,events -n kube-system
+
+Sample
+kubectl create deployment hello-node --image=registry.k8s.io/e2e-test-images/agnhost:2.39 -- /agnhost netexec --http-port=8080
+```
 
 **Refs** 
 ---
