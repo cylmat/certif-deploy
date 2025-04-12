@@ -61,19 +61,6 @@ kubectl port-forward service/hello-minikube 7080:8080
 http://localhost:7080
 ```
 
-**Replicas**
-```
-kubectl scale deploy/hello-node --replicas=4
-kubectl get deploy
-kubectl get pods -o wide   (see all replicas)
-```
-
-**Addons**
-```
-minikube addons list
-minikube addons enable metrics-server
-```
-
 **Clean**
 ```
 kubectl delete service hello-minikube
