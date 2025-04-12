@@ -61,6 +61,13 @@ kubectl port-forward service/hello-minikube 7080:8080
 http://localhost:7080
 ```
 
+**Replicas**
+```
+kubectl scale deploy/hello-node --replicas=4
+kubectl get deploy
+kubectl get pods -o wide   (see all replicas)
+```
+
 **Addons**
 ```
 minikube addons list
@@ -105,7 +112,7 @@ k delete svc/kubernetes
 **Actions**
 
 - kubectl <action> <resource>
-- kubectl create/describe/delete/exec/get/logs node/deployment/service
+- kubectl create/describe/delete/exec/get/logs/rs node/deployment/service
 
 ```
 kubectl config get-contexts
