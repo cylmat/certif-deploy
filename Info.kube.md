@@ -27,8 +27,7 @@ Pods are running in an isolated, private network. Proxy access to them
 kubectl proxy -p 8050 (in other terminal) 
 curl http://127.0.0.1:8050/version
 
-kubectl get pods -o json | jq '.items[0].metadata.name'
-export POD_NAME=$(kubectl get pods -o go-template --template '{{range .items}}{{.metadata.name}}{{"\n"}}{{end}}')
+export POD_NAME=$(kubectl get pods -o json | jq -r '.items[0].metadata.name')
 curl http://localhost:8050/api/v1/namespaces/default/pods/$POD_NAME:8080/proxy/
 ```
 
@@ -37,6 +36,23 @@ curl http://localhost:8050/api/v1/namespaces/default/pods/$POD_NAME:8080/proxy/
 minikube service hello-minikube
 kubectl get services hello-minikube
 kubectl describe services hello-minikube
+
+---bootcamp
+
+kubectl create deployment k-bootcamp --image=gcr.io/google-samples/kubernetes-bootcamp:v1
+kubectl describe services/kubernetes
+minikube service kubernetes --url (in other terminal) 
+curl 127.0.0.1:<port_displayed>
+
+export NODE_PORT="$(kubectl get services/kubernetes -o json | jq -r '.spec.ports[0].port')"
+curl http://"$(minikube ip):$NODE_PORT"
+export POD_NAME="$(kubectl get pods | grep -o -E 'k-bootcamp(-?\w*)*')"
+echo "Name of the Pod: $POD_NAME"
+
+--- label
+
+kubectl label pods "$POD_NAME" version=v1
+kubectl get pods -l version=v1
 ```
 
 **Port-forward on local**
@@ -56,6 +72,9 @@ minikube addons enable metrics-server
 kubectl delete service hello-minikube
 kubectl delete deployment hello-minikube
 minikube stop    (minikube delete)
+
+---
+k delete svc/kubernetes
 ```
 
 ## Infos
