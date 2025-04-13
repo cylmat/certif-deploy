@@ -13,8 +13,13 @@ kubectl config view
 
 **Deploy**
 ```
+---hello
 kubectl create deployment hello-minikube --image=kicbase/echo-server:1.0
 kubectl expose deployment hello-minikube --type=NodePort --port=8080
+
+---bootcamp
+kubectl create deployment k-bootcamp --image=gcr.io/google-samples/kubernetes-bootcamp:v1
+kubectl describe services/kubernetes
 
 kubectl get deploy,events -n kube-system
 ```
@@ -33,24 +38,23 @@ curl http://localhost:8050/api/v1/namespaces/default/pods/$POD_NAME:8080/proxy/
 
 **Use service (provide IP)**
 ```
-minikube service hello-minikube
+---hello
 kubectl get services hello-minikube
 kubectl describe services hello-minikube
+   or
+minikube service hello-minikube
 
 ---bootcamp
-
-kubectl create deployment k-bootcamp --image=gcr.io/google-samples/kubernetes-bootcamp:v1
-kubectl describe services/kubernetes
-minikube service kubernetes --url (in other terminal) 
-curl 127.0.0.1:<port_displayed>
-
-export NODE_PORT="$(kubectl get services/kubernetes -o json | jq -r '.spec.ports[0].port')"
+export NODE_PORT="$(kubectl get services/kubernetes -o json | jq -r '.spec.ports[0].targetPort')"
+echo NODE_PORT=$NODE_PORT
 curl http://"$(minikube ip):$NODE_PORT"
 export POD_NAME="$(kubectl get pods | grep -o -E 'k-bootcamp(-?\w*)*')"
 echo "Name of the Pod: $POD_NAME"
+   or
+minikube service kubernetes --url (in other terminal) 
+curl 127.0.0.1:<port_displayed>
 
---- label
-
+---label
 kubectl label pods "$POD_NAME" version=v1
 kubectl get pods -l version=v1
 ```
@@ -61,14 +65,46 @@ kubectl port-forward service/hello-minikube 7080:8080
 http://localhost:7080
 ```
 
+**Addons**
+```
+minikube addons list
+minikube addons enable metrics-server
+```
+
+**Replicas**
+```
+kubectl delete svc/kubernetes
+kubectl expose deploy/k-bootcamp --type="LoadBalancer" --port 8080
+
+kubectl scale deploy/k-bootcamp --replicas=4
+kubectl get replicasets    (kubectl get rs)
+kubectl get pods -o wide   (see all replicas)
+kubectl describe services/kubernetes
+
+export NODE_PORT="$(kubectl get services/kubernetes -o json | jq -r '.spec.ports[0].targetPort')"
+echo NODE_PORT=$NODE_PORT
+curl http://"$(minikube ip):$NODE_PORT"
+
+kubectl rollout status deploy/k-bootcamp
+```
+
+**Update image (rolling update)**
+```
+kubectl set image deploy/k-bootcamp kubernetes-bootcamp=docker.io/jocatalin/kubernetes-bootcamp:v2
+(previous was gcr.io/google-samples/kubernetes-bootcamp:v1)
+
+kubectl describe deploy/k-bootcamp | grep "Image"
+kubectl get pods -o json | jq '.items[0].spec.containers[0].image'
+```
+
 **Clean**
 ```
 kubectl delete service hello-minikube
-kubectl delete deployment hello-minikube
-minikube stop    (minikube delete)
-
+kubectl delete deployment hello-minikube 
 ---
-k delete svc/kubernetes
+kubectl delete svc/kubernetes
+
+minikube stop    (minikube delete)
 ```
 
 ## Infos
@@ -99,6 +135,7 @@ k delete svc/kubernetes
 **Actions**
 
 - kubectl <action> <resource>
+- kubectl api-resources   (get all resources)
 - kubectl create/describe/delete/exec/get/logs/rs node/deployment/service
 
 ```
