@@ -63,6 +63,17 @@ kubectl get pods -l version=v1
 ```
 kubectl port-forward service/hello-minikube 7080:8080
 http://localhost:7080
+
+(sample):
+kubectl port-forward mongo-75f59d57f4-4nd6q 28015:27017
+  or
+kubectl port-forward pods/mongo-75f59d57f4-4nd6q 28015:27017
+  or
+kubectl port-forward deployment/mongo 28015:27017
+  or
+kubectl port-forward replicaset/mongo-75f59d57f4 28015:27017
+  or
+kubectl port-forward service/mongo 28015:27017
 ```
 
 **Addons**
@@ -137,6 +148,7 @@ minikube stop    (minikube delete)
 - kubectl <action> <resource>
 - kubectl api-resources   (get all resources)
 - kubectl create/describe/delete/exec/get/logs/rs node/deployment/service
+- expose: kubectl expose/port-forward/proxy.
 
 ```
 kubectl config get-contexts
@@ -162,10 +174,8 @@ Ref:
 - https://kubernetes.io/docs/reference/kubectl/quick-reference
 
 Tutorials
-- https://kubernetestraining.io
 - https://labs.play-with-k8s.com
 - https://blent.ai/blog/a/tutoriel-kubernetes-introduction
-- https://github.com/rslim087a/kong-api-gateway-kubernetes-tutorial  
 
 Port forward:
 - https://kubernetes.io/docs/tasks/access-application-cluster/port-forward-access-application-cluster
