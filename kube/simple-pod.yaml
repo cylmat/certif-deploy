@@ -1,5 +1,6 @@
 
 # Use kubectl apply -f https://k8s.io/examples/pods/simple-pod.yaml
+# sample: https://kubernetes.io/docs/tutorials/services/connect-applications-service/
 
 apiVersion: v1
 kind: Pod

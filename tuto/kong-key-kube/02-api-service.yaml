@@ -6,6 +6,7 @@ metadata:
   namespace: grade-demo
 
 spec:
+  type: ClusterIP
   selector:
     app: grade-submission
   ports:

@@ -37,6 +37,10 @@ curl http://localhost:8050/api/v1/namespaces/default/pods/$POD_NAME:8080/proxy/
 ```
 
 **Use service (provide IP)**
+
+! (can be reached directly in browser with Minikube on Wsl, must expose it with "minikube service --url <service>") !
+- https://minikube.sigs.k8s.io/docs/handbook/accessing
+
 ```
 ---hello
 kubectl get services hello-minikube
@@ -129,6 +133,7 @@ minikube stop    (minikube delete)
     - Set-based: environment in (production, qa), tier notin (frontend, backend), partition, !partition
 - A Service is an abstraction which defines a logical set of Pods and how to access them
     - ClusterIP (default) - Exposes the Service on an internal IP in the cluster (only reachable from within the cluster)
+                            (to access it use an Ingress or a Gateway.)
     - NodePort - Exposes the Service on the same port of each selected Node in the cluster using NAT.
     - LoadBalancer - Creates an external load balancer in the current cloud with a fixed, external IP
     - ExternalName - Maps the Service to the contents of the externalName field (e.g. foo.bar.example.com)
@@ -147,7 +152,7 @@ minikube stop    (minikube delete)
 
 - kubectl <action> <resource>
 - kubectl api-resources   (get all resources)
-- kubectl create/describe/delete/exec/get/logs/rs node/deployment/service
+- kubectl create/describe/delete/exec/get deployment/ingress/logs/node/rs/service
 - expose: kubectl expose/port-forward/proxy.
 
 ```
@@ -168,10 +173,17 @@ kubectl label pod -l app=nginx tier=fe
 kubectl create deployment hello-node --image=registry.k8s.io/e2e-test-images/agnhost:2.39 -- /agnhost netexec --http-port=8080
 ```
 
+Careful
+```
+kubectl get pods -A    (all namespaces)
+kubectl delete --all namespaces
+```
+
 **Refs** 
 ---
 Ref:
 - https://kubernetes.io/docs/reference/kubectl/quick-reference
+- https://kubernetes.io/docs/reference/config-api/kubeconfig.v1
 
 Tutorials
 - https://labs.play-with-k8s.com
