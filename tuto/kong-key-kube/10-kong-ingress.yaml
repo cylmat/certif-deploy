@@ -7,8 +7,8 @@ metadata:
  name: grade-submission
  namespace: grade-demo
  annotations:
-   konghq.com/strip-path: "false"
-  #  konghq.com/plugins: <auth-plugin-name>, <ratelimit-plugin-name>    # Plugin names referenced in KongPlugin resources
+   konghq.com/strip-path: "false"  # don't remove prefix (sample: /api/grades => /grades)
+   konghq.com/plugins: grade-auth, grade-rate    # Plugin names referenced in KongPlugin resources
    kubernetes.io/ingress.class: kong
    konghq.com/methods: "GET, POST"
 
@@ -17,7 +17,7 @@ spec:
  rules:
    - http:
        paths:
-         - path: /
+         - path: /grades
            pathType: Prefix
            backend:
              service:

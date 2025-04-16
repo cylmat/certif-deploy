@@ -36,7 +36,15 @@ minikube service kong-kong-proxy -n kong --url    (in a separate terminal)
 
 ```
 kubectl apply -f tuto/kong-key-kube/10-kong-ingress.yaml
+minikube service kong-kong-proxy -n kong --url    (in a separate terminal)
 (open in firefox http://127.0.0.1:<port displayed>)  "KongProxy ok"
+```
+
+```
+kubectl apply -f tuto/kong-key-kube     (all, with consumer and secret)
+curl "$PROXY_IP/grades"      ("message":"No API key found in request")
+curl -H "apikey: mygradepass" "$PROXY_IP/grades"
+[OK]
 ```
 
 **Ref**  

@@ -1,0 +1,14 @@
+# kong-consumer.yaml
+apiVersion: configuration.konghq.com/v1
+kind: KongConsumer
+
+metadata:
+ name: grade-consumer             # Unique name for this consumer
+ namespace: grade-demo
+ annotations:
+  kubernetes.io/ingress.class: kong
+  
+username: gradeuser                # Username for this consumer
+custom_id: grade-id              # Unique ID for this consumer
+credentials:
+ - secret-gradepass                   # Name of the Secret containing the API key
