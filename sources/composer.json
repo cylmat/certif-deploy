@@ -1,0 +1,13 @@
+{
+    "require": {
+        "onelogin/php-saml": "*",
+        "simplesamlphp/saml2": "^4.18",
+        "simplesamlphp/simplesamlphp": "*"
+    },
+    "config": {
+        "allow-plugins": {
+            "simplesamlphp/composer-xmlprovider-installer": true,
+            "simplesamlphp/composer-module-installer": true
+        }
+    }
+}

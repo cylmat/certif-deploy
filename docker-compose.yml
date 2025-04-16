@@ -1,9 +1,19 @@
+# ###
+# docker compose up --build -d
+# docker compose down
+# docker compose exec app composer install -n
+# ###
+
 services:
 
   app:
     # https://github.com/richarvey/nginx-php-fpm/blob/main/Dockerfile
     # image: richarvey/nginx-php-fpm
-    image: php:8.3-apache
+    # image: php:8.3-apache
+    container_name: certif-deploy-app
+    build:
+      context: ./docker
+      dockerfile: Dockerfile
     restart: always
     environment:
       # Set domain for let's encrypt
@@ -11,5 +21,8 @@ services:
       PGID: ${PGID}
       PUID: ${PUID}
       SCRIPT_DIR: /var/www/html/scripts
-      SSH_KEY: 'sdfgsdfgsfdgsfdgsdgf'
+      SSH_KEY: 'my-ssh-key'
       WEBROOT: /var/www/html
+    ports: [8000:80]
+    volumes:
+      - ./sources:/var/www/html
