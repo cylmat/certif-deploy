@@ -10,7 +10,6 @@ services:
     # https://github.com/richarvey/nginx-php-fpm/blob/main/Dockerfile
     # image: richarvey/nginx-php-fpm
     # image: php:8.3-apache
-    container_name: certif-deploy-app
     build:
       context: ./docker
       dockerfile: Dockerfile
@@ -23,14 +22,56 @@ services:
       SCRIPT_DIR: /var/www/html/scripts
       SSH_KEY: 'my-ssh-key'
       WEBROOT: /var/www/html
-    ports: [8000:80, 443:443]
+    # ports: [8000:80, 443:443] # use traefik
     volumes:
       - ./sources:/var/www/html
+    labels:
+      - "traefik.http.routers.app.rule=Host(`localhost`)" # " && PathPrefix(`/api`)"
 
-  # traefik:
-  #   container_name: certif-deploy-traefik
-  #   image: traefik:v2.2
-  #   restart: always
-  #   ports:
-  #     - "80:80"
-  #     - "443:443"
+  traefik:
+    image: traefik:v3
+    restart: always
+    command:
+      --api.insecure=true
+      --providers.docker
+      # --entrypoints.websecure.address=:443  # doesn't works for know ?
+    ports:
+      - "80:80"
+      - "443:443"
+      # The Web UI (enabled by --api.insecure=true)
+      - "8080:8080"
+    volumes:
+      # So that Traefik can listen to the Docker events
+      - /var/run/docker.sock:/var/run/docker.sock
+
+  openldap:
+    image: osixia/openldap:1.5.0
+    restart: unless-stopped
+    container_name: openldap
+    environment:
+      LDAP_BASE_DN: "dc=example,dc=org"
+      LDAP_ORGANISATION: "Example Organization"
+      LDAP_DOMAIN: "example.org"
+      LDAP_ADMIN_PASSWORD: "adminp"
+      LDAP_TLS: "false"
+    ports:
+      - 389:389
+      - 636:636
+    command: --copy-service
+    volumes:
+      - ./ldap/bootstrap.ldif:/container/service/slapd/assets/config/bootstrap/ldif/custom/50-bootstrap.ldif
+
+  ldapadmin:
+    #
+    # Boot can take some time !
+    # Login: cn=admin,dc=example,dc=org / adminp
+    # 
+    image: osixia/phpldapadmin:0.9.0
+    restart: unless-stopped
+    ports: [8085:80] # https://localhost:8085
+    # hostname: phpldapadmin
+    environment:
+      - PHPLDAPADMIN_LDAP_HOSTS=openldap  # docker container name
+      - PHPLDAPADMIN_HTTPS=false
+    depends_on:
+      - openldap

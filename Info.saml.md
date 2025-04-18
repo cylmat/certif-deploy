@@ -1,4 +1,5 @@
-
+# SAML 
+- Security Assertion Markup Language
 
 **Ref**  
 - https://www.youtube.com/watch?v=l-6QSEqDJPo (OktaDev: A Developer's Guide to SAML)

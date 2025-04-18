@@ -41,7 +41,7 @@ RUN openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
 RUN chmod 440 /etc/apache2/server.crt
 
 # Update /etc/apache2/sites-available/default-ssl.conf
-RUN sed -i -e "s#SSLCertificateFile .*#SSLCertificateFile /etc/apache2/server.crt#" /etc/apache2/sites-available/default-ssl.conf
-RUN sed -i -e "s#SSLCertificateKeyFile .*#SSLCertificateKeyFile  /etc/apache2/server.key#" /etc/apache2/sites-available/default-ssl.conf
+RUN sed -i -e "s#SSLCertificateFile .*#SSLCertificateFile /etc/apache2/server.crt#" /etc/apache2/sites-enabled/default-ssl.conf
+RUN sed -i -e "s#SSLCertificateKeyFile .*#SSLCertificateKeyFile /etc/apache2/server.key#" /etc/apache2/sites-enabled/default-ssl.conf
 
 WORKDIR /var/www/html
