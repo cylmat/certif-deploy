@@ -1,4 +1,5 @@
-FROM php:8.3-apache
+FROM php:8.3-apache AS base
+# image: richarvey/nginx-php-fpm
 
 COPY --from=composer:2.2 /usr/bin/composer /usr/local/bin/composer
 
@@ -21,9 +22,24 @@ RUN docker-php-ext-install ldap xml zip
 #   && docker-php-ext-configure memcached \
 #   && docker-php-ext-install memcached
 
-# ###### #
-# Apache #
-# ###### #
+
+
+# #### #
+# SAML #
+# #### #
+
+COPY ./saml/vendor /var/simplesamlphp_install/vendor
+RUN ln -s /var/simplesamlphp_install/vendor/simplesamlphp/simplesamlphp /var/simplesamlphp
+
+WORKDIR /var/simplesamlphp/public
+
+
+
+# ### #
+# SSL #
+# ### #
+
+FROM base AS ssl
 
 # Activate SSL
 # Install /etc/ssl/certs/ssl-cert-snakeoil.pem
@@ -44,4 +60,3 @@ RUN chmod 440 /etc/apache2/server.crt
 RUN sed -i -e "s#SSLCertificateFile .*#SSLCertificateFile /etc/apache2/server.crt#" /etc/apache2/sites-enabled/default-ssl.conf
 RUN sed -i -e "s#SSLCertificateKeyFile .*#SSLCertificateKeyFile /etc/apache2/server.key#" /etc/apache2/sites-enabled/default-ssl.conf
 
-WORKDIR /var/www/html

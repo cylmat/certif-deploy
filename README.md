@@ -2,6 +2,11 @@
 
 Playground for using helm, kubernetes, openssl, etc... 
 
+Run
+---
+- Docker: Saml + Ldap
+- Kubernetes: Helm + Kong
+
 
 Ref
 ---

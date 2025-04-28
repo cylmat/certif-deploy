@@ -1,48 +1,61 @@
 # ###
 # docker compose up --build -d
-# docker compose down
 # docker compose exec app composer install -n
+# docker compose down
+# ###
+# http://localhost:80   # app
+# http://localhost:81   # saml
+# http://localhost:8080 # traefik
+# http://localhost:8085 # cn=admin,dc=example,dc=org / adminp
 # ###
 
 services:
 
-  app:
+  # 
+  # docker compose exec saml cd /var/www && composer install -n
+  # 
+  saml:
     # https://github.com/richarvey/nginx-php-fpm/blob/main/Dockerfile
-    # image: richarvey/nginx-php-fpm
     # image: php:8.3-apache
     build:
-      context: ./docker
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: ./docker/Dockerfile
+      target: base
     restart: always
     environment:
       # Set domain for let's encrypt
       DOMAIN: mydomain
       PGID: ${PGID}
       PUID: ${PUID}
-      SCRIPT_DIR: /var/www/html/scripts
       SSH_KEY: 'my-ssh-key'
-      WEBROOT: /var/www/html
-    # ports: [8000:80, 443:443] # use traefik
+    ports: [80:80]
     volumes:
-      - ./sources:/var/www/html
-    labels:
-      - "traefik.http.routers.app.rule=Host(`localhost`)" # " && PathPrefix(`/api`)"
+      - ./docker/saml/000-default.conf:/etc/apache2/sites-enabled/000-default.conf
+      - ./saml:/var/www
+      # override
+      # - ./saml/simplesamlphp/cert:/var/simplesamlphp/cert
+      - ./saml/simplesamlphp/config/config.php:/var/simplesamlphp/config/config.php
+      # - ./saml/simplesamlphp/metadata:/var/simplesamlphp/metadata
+      - ./saml/simplesamlphp/public/index.php:/var/simplesamlphp/public/index.php
+    # labels:
+    #   - "traefik.http.routers.app.rule=Host(`localhost`)" # " && PathPrefix(`/api`)"
 
-  traefik:
-    image: traefik:v3
-    restart: always
-    command:
-      --api.insecure=true
-      --providers.docker
-      # --entrypoints.websecure.address=:443  # doesn't works for know ?
-    ports:
-      - "80:80"
-      - "443:443"
-      # The Web UI (enabled by --api.insecure=true)
-      - "8080:8080"
-    volumes:
-      # So that Traefik can listen to the Docker events
-      - /var/run/docker.sock:/var/run/docker.sock
+  # traefik:
+  #   image: traefik:v3
+  #   restart: always
+  #   command:
+  #     --api.insecure=true
+  #     --providers.docker
+  #     # --entrypoints.websecure.address=:443  # doesn't works for know ?
+  #   ports:
+  #     - "80:80"
+  #     - "81:81"
+  #     - "443:443"
+  #     # The Web UI (enabled by --api.insecure=true)
+  #     - "8080:8080"
+  #   volumes:
+  #     # So that Traefik can listen to the Docker events
+  #     - /var/run/docker.sock:/var/run/docker.sock
 
   openldap:
     image: osixia/openldap:1.5.0
@@ -59,7 +72,7 @@ services:
       - 636:636
     command: --copy-service
     volumes:
-      - ./ldap/bootstrap.ldif:/container/service/slapd/assets/config/bootstrap/ldif/custom/50-bootstrap.ldif
+      - ./data/ldap/bootstrap.ldif:/container/service/slapd/assets/config/bootstrap/ldif/custom/50-bootstrap.ldif
 
   ldapadmin:
     # https://github.com/osixia/docker-phpLDAPadmin
