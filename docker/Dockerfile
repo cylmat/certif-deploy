@@ -3,7 +3,7 @@ FROM php:8.3-apache AS base
 
 COPY --from=composer:2.2 /usr/bin/composer /usr/local/bin/composer
 
-RUN apt update && apt install -y curl git vim zip
+RUN apt update && apt install -y curl git vim wget zip
 
 # ### #
 # Php #
@@ -28,10 +28,17 @@ RUN docker-php-ext-install ldap xml zip
 # SAML #
 # #### #
 
-COPY ./saml/vendor /var/simplesamlphp_install/vendor
-RUN ln -s /var/simplesamlphp_install/vendor/simplesamlphp/simplesamlphp /var/simplesamlphp
+WORKDIR /tmp
+RUN wget https://github.com/simplesamlphp/simplesamlphp/releases/download/v2.4.0/simplesamlphp-2.4.0-full.tar.gz \
+    -O /tmp/simplesamlphp-2.4.0-full.tar.gz
+RUN tar xzf /tmp/simplesamlphp-2.4.0-full.tar.gz
+RUN mv /tmp/simplesamlphp-2.4.0 /var/simplesamlphp
 
-WORKDIR /var/simplesamlphp/public
+
+RUN mkdir /var/cache/simplesamlphp
+RUN chown -R www-data:www-data /var/cache/simplesamlphp
+
+WORKDIR /var/simplesamlphp
 
 
 

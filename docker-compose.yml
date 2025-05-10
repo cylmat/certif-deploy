@@ -1,12 +1,13 @@
 # ###
 # docker compose up --build -d
-# docker compose exec app composer install -n
+# docker compose exec saml composer install -n
 # docker compose down
 # ###
-# http://localhost:80   # app
-# http://localhost:81   # saml
+# http://localhost:80   # saml
 # http://localhost:8080 # traefik
 # http://localhost:8085 # cn=admin,dc=example,dc=org / adminp
+# 
+# saml => http://localhost/simplesaml/module.php/core/welcome
 # ###
 
 services:
@@ -30,13 +31,13 @@ services:
       SSH_KEY: 'my-ssh-key'
     ports: [80:80]
     volumes:
-      - ./docker/saml/000-default.conf:/etc/apache2/sites-enabled/000-default.conf
-      - ./saml:/var/www
+      - ./docker/apache/000-default.conf:/etc/apache2/sites-enabled/000-default.conf
       # override
+      - ./saml/custom/config:/var/simplesamlphp_custom/config
+      # - ./saml/simplesamlphp:/var/simplesamlphp
       # - ./saml/simplesamlphp/cert:/var/simplesamlphp/cert
-      - ./saml/simplesamlphp/config/config.php:/var/simplesamlphp/config/config.php
       # - ./saml/simplesamlphp/metadata:/var/simplesamlphp/metadata
-      - ./saml/simplesamlphp/public/index.php:/var/simplesamlphp/public/index.php
+      # - ./saml/custom/public/index.php:/var/simplesamlphp/public/index.php
     # labels:
     #   - "traefik.http.routers.app.rule=Host(`localhost`)" # " && PathPrefix(`/api`)"
 
