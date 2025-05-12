@@ -20,7 +20,7 @@ services:
     # image: php:8.3-apache
     build:
       context: .
-      dockerfile: ./docker/Dockerfile
+      dockerfile: ./docker/saml/Dockerfile
       target: base
     restart: always
     environment:
@@ -31,7 +31,7 @@ services:
       SSH_KEY: 'my-ssh-key'
     ports: [80:80]
     volumes:
-      - ./docker/apache/000-default.conf:/etc/apache2/sites-enabled/000-default.conf
+      - ./docker/saml/apache/000-default.conf:/etc/apache2/sites-enabled/000-default.conf
       # override
       - ./saml/custom/config:/var/simplesamlphp_custom/config
       # - ./saml/simplesamlphp:/var/simplesamlphp
@@ -73,7 +73,7 @@ services:
       - 636:636
     command: --copy-service
     volumes:
-      - ./data/ldap/bootstrap.ldif:/container/service/slapd/assets/config/bootstrap/ldif/custom/50-bootstrap.ldif
+      - ./docker/ldap/bootstrap.ldif:/container/service/slapd/assets/config/bootstrap/ldif/custom/50-bootstrap.ldif
 
   ldapadmin:
     # https://github.com/osixia/docker-phpLDAPadmin

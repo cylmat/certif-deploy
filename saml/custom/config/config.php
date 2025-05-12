@@ -128,7 +128,7 @@ $config = [
      * also as the technical contact in generated metadata.
      */
     'technicalcontact_name' => 'Administrator',
-    'technicalcontact_email' => 'na@example.org',
+    'technicalcontact_email' => 'na123sample@example.org',
 
     /*
      * (Optional) The method by which email is delivered.  Defaults to mail which utilizes the
@@ -189,7 +189,7 @@ $config = [
      * A possible way to generate a random salt is by running the following command from a unix shell:
      * LC_ALL=C tr -c -d '0123456789abcdefghijklmnopqrstuvwxyz' </dev/urandom | dd bs=32 count=1 2>/dev/null;echo
      */
-    'secretsalt' => 'defaultsecretsalt',
+    'secretsalt' => 'nivAROkTOMczp2IYRwNiAT40DRxRFP2PgScCmK6FOqE=',
 
     /*
      * This password must be kept secret, and modified from the default value 123.
@@ -201,7 +201,7 @@ $config = [
      * ansible.builtin.password_hash(hashtype='blowfish', ident='2y', rounds=13)
      * to generate this hashed value.
      */
-    'auth.adminpassword' => '123',
+    'auth.adminpassword' => 'admin1',
 
     /*
      * Set this option to true if you want to require administrator password to access the metadata.
