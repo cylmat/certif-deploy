@@ -21,7 +21,7 @@ services:
     build:
       context: .
       dockerfile: ./docker/saml/Dockerfile
-      target: base
+      target: secure
     restart: always
     environment:
       # Set domain for let's encrypt
@@ -29,14 +29,12 @@ services:
       PGID: ${PGID}
       PUID: ${PUID}
       SSH_KEY: 'my-ssh-key'
-    ports: [80:80]
+    ports: [80:80, 443:443]
     volumes:
-      - ./docker/saml/apache/000-default.conf:/etc/apache2/sites-enabled/000-default.conf
+      - ./docker/saml/apache/000-default.conf:/etc/apache2/sites-enabled/000-default.conf 
+      - ./docker/saml/apache/default-ssl.conf:/etc/apache2/sites-enabled/default-ssl.conf
       # override
       - ./saml/custom/config:/var/simplesamlphp_custom/config
-      # - ./saml/simplesamlphp:/var/simplesamlphp
-      # - ./saml/simplesamlphp/cert:/var/simplesamlphp/cert
-      # - ./saml/simplesamlphp/metadata:/var/simplesamlphp/metadata
       # - ./saml/custom/public/index.php:/var/simplesamlphp/public/index.php
     # labels:
     #   - "traefik.http.routers.app.rule=Host(`localhost`)" # " && PathPrefix(`/api`)"

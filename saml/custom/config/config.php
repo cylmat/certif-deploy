@@ -68,7 +68,7 @@ $config = [
      * root directory.
      */
     'cachedir' => '/var/cache/simplesamlphp',
-    //'loggingdir' => '/var/log/',
+    'loggingdir' => '/var/log/',
     //'datadir' => '/var/data/',
     //'tempdir' => '/tmp/simplesamlphp',
 
@@ -173,7 +173,7 @@ $config = [
      *
      * See this page for a list of valid timezones: http://php.net/manual/en/timezones.php
      */
-    'timezone' => null,
+    'timezone' => 'Europe/Amsterdam',
 
 
 
@@ -189,7 +189,7 @@ $config = [
      * A possible way to generate a random salt is by running the following command from a unix shell:
      * LC_ALL=C tr -c -d '0123456789abcdefghijklmnopqrstuvwxyz' </dev/urandom | dd bs=32 count=1 2>/dev/null;echo
      */
-    'secretsalt' => 'nivAROkTOMczp2IYRwNiAT40DRxRFP2PgScCmK6FOqE=',
+    'secretsalt' => 'nivAROkTOMczp2IYRwNiAT40DRxRFP2PgScCmK6FOqE',
 
     /*
      * This password must be kept secret, and modified from the default value 123.
@@ -634,7 +634,7 @@ $config = [
      *
      * If unset, SimpleSAMLphp will try to automatically determine the right value
      */
-    //'session.cookie.secure' => true,
+    'session.cookie.secure' => true,
 
     /*
      * Set the SameSite attribute in the cookie.
