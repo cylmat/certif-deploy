@@ -11,6 +11,20 @@ $config = [
     /*******************************
      | BASIC CONFIGURATION OPTIONS |
      *******************************/
+    'baseurlpath' => 'simplesaml/',
+    'auth.adminpassword' => 'admin1', // user: admin
+
+    'technicalcontact_name' => 'Administrator',
+    'technicalcontact_email' => 'na123sample@example.org',
+
+    'database.dsn' => 'mysql:host=localhost;dbname=saml',
+    'database.username' => 'simplesamlphp',
+    'database.password' => 'secret',
+    'database.options' => [],
+
+    'session.cookie.secure' => true,
+    'enable.saml20-idp' => true, /// ENABLE IDENTITY PROVIDER
+
 
     /*
      * Setup the following parameters to match your installation.
@@ -31,7 +45,7 @@ $config = [
      * external url, no matter where you come from (direct access or via the
      * reverse proxy).
      */
-    'baseurlpath' => 'simplesaml/',
+    // 'baseurlpath' => 'simplesaml/',
 
     /*
      * The 'application' configuration array groups a set configuration options
@@ -127,8 +141,8 @@ $config = [
      * The email address will be used as the recipient address for error reports, and
      * also as the technical contact in generated metadata.
      */
-    'technicalcontact_name' => 'Administrator',
-    'technicalcontact_email' => 'na123sample@example.org',
+    // 'technicalcontact_name' => 'Administrator',
+    // 'technicalcontact_email' => 'na123sample@example.org',
 
     /*
      * (Optional) The method by which email is delivered.  Defaults to mail which utilizes the
@@ -201,7 +215,7 @@ $config = [
      * ansible.builtin.password_hash(hashtype='blowfish', ident='2y', rounds=13)
      * to generate this hashed value.
      */
-    'auth.adminpassword' => 'admin1',
+    // 'auth.adminpassword' => '123',
 
     /*
      * Set this option to true if you want to require administrator password to access the metadata.
@@ -483,14 +497,14 @@ $config = [
      * Ensure that you have the required PDO database driver installed
      * for your connection string.
      */
-    'database.dsn' => 'mysql:host=localhost;dbname=saml',
+    // 'database.dsn' => 'mysql:host=localhost;dbname=saml',
 
     /*
      * SQL database credentials
      */
-    'database.username' => 'simplesamlphp',
-    'database.password' => 'secret',
-    'database.options' => [],
+    // 'database.username' => 'simplesamlphp',
+    // 'database.password' => 'secret',
+    // 'database.options' => [],
 
     /*
      * (Optional) Table prefix
@@ -539,7 +553,7 @@ $config = [
      * one of the functionalities below, but in some cases you could run multiple functionalities.
      * In example when you are setting up a federation bridge.
      */
-    'enable.saml20-idp' => false,
+    // 'enable.saml20-idp' => false,
     'enable.adfs-idp' => false,
 
 
@@ -561,7 +575,7 @@ $config = [
      */
 
     'module.enable' => [
-        'exampleauth' => false,
+        'exampleauth' => true,
         'core' => true,
         'admin' => true,
         'saml' => true,
@@ -634,7 +648,7 @@ $config = [
      *
      * If unset, SimpleSAMLphp will try to automatically determine the right value
      */
-    'session.cookie.secure' => true,
+    // 'session.cookie.secure' => true,
 
     /*
      * Set the SameSite attribute in the cookie.

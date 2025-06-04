@@ -27,7 +27,8 @@ $config = [
         'saml:SP',
 
         // The entity ID of this SP.
-        'entityID' => 'https://myapp.example.org/',
+        // 'entityID' => 'https://myapp.example.org/',
+        'entityID' => 'https://localhost/',
 
         // The entity ID of the IdP this SP should contact.
         // Can be NULL/unset, in which case the user will be shown a list of available IdPs.
@@ -67,6 +68,37 @@ $config = [
         */
     ],
 
+    'used-userpass' => [
+        'exampleauth:UserPass', 
+
+        // Give the user an option to save their username for future login attempts
+        // And when enabled, what should the default be, to save the username or not
+        //'remember.username.enabled' => false,
+        //'remember.username.checked' => false,
+
+        'users' => [
+            'user:pass' => [
+                'uid' => ['testing_user'],
+                'eduPersonAffiliation' => ['member', 'user'],
+            ],
+            'student:studentpass' => [
+                'uid' => ['test'],
+                'eduPersonAffiliation' => ['member', 'student'],
+            ],
+            'employee:employeepass' => [
+                'uid' => ['employee'],
+                'eduPersonAffiliation' => ['member', 'employee'],
+            ],
+        ],
+    ],
+
+
+    // 'used-static' => [ // must enable 'module.enable' => [ 'exampleauth'
+    //     'exampleauth:StaticSource',
+    //     'uid' => ['testuser'],
+    //     'eduPersonAffiliation' => ['member', 'employee'],
+    //     'cn' => ['Test User'],
+    // ],
 
     /*
     'example-sql' => [

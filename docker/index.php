@@ -1,0 +1,16 @@
+<?php
+
+echo "INDEX TLS TRAEFIK SAMPLE".'<br/>';
+echo 'HTTP_HOST: '.$_SERVER['HTTP_HOST'].'<br/>';
+echo 'HTTP_X_FORWARDED_PORT: '.$_SERVER['HTTP_X_FORWARDED_PORT'].'<br/>';
+echo 'REQUEST_SCHEME: '.$_SERVER['REQUEST_SCHEME'].'<br/>';
+echo 'HTTP_X_FORWARDED_PROTO: '.$_SERVER['HTTP_X_FORWARDED_PROTO'].'<br/>';
+echo 'REMOTE_PORT: '.$_SERVER['REMOTE_PORT'].'<br/>';
+echo 'SERVER_PROTOCOL: '.$_SERVER['SERVER_PROTOCOL'].'<br/>';
+echo 'HTTP_X_REAL_IP: '.$_SERVER['HTTP_X_REAL_IP'].'<br/>';
+echo 'SERVER_SIGNATURE: '.$_SERVER['SERVER_SIGNATURE'].'<br/>';
+
+
+var_dump($_SERVER);
+
+var_dump($_ENV);

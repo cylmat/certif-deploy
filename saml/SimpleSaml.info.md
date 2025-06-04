@@ -1,34 +1,34 @@
 # Simple Saml run
 
 Tuto:
-- https://simplesamlphp.org/docs/stable/simplesamlphp-install.html
-- https://www.digitalocean.com/community/tutorials/how-to-install-and-configure-simplesamlphp-for-saml-authentication-on-ubuntu-18-04-fr
-- https://buckbeak99.medium.com/a-step-by-step-guide-to-configuring-simplesamlphp-bcd2dbd2b2b4
+
+- https://simplesamlphp.org/docs/stable/simplesamlphp-sp.html
+- https://simplesamlphp.org/docs/stable/simplesamlphp-idp.html
 
 ## Run
 
-Visit page:
-- http://localhost/simplesaml
-- http://localhost/simplesaml/admin
+Visit page with "https" only":
+- https://localhost/simplesaml
+- https://localhost/simplesaml/admin   (admin:admin1)
 
+[IDP]
+Go to test, then used-userpass:
+https://localhost/simplesaml/module.php/admin/test   (user:pass)
+
+
+## Other
 
 ### Config
 
-! USE SSL !
+in config/config.php
+
+! USE SSL with https only !
 
 - secretsalt => openssl rand -base64 32
 - timezone => https://www.php.net/manual/en/timezones.php
 
-config/config.php
-```
-'baseurlpath' => 'simplesaml/',
-'auth.adminpassword'  => 'admin1',
-'secretsalt' => 'your_generated_salt',
-'technicalcontact_name' => 'Administrator',
-'technicalcontact_email' => 'na123sample@example.org',
-'timezone' => 'Europe/Amsterdam'
+### Ref
 
-'session.cookie.secure' => true,
-
-# see 'module.enable' 
-```
+- https://simplesamlphp.org/docs/stable/simplesamlphp-install.html
+- https://www.digitalocean.com/community/tutorials/how-to-install-and-configure-simplesamlphp-for-saml-authentication-on-ubuntu-18-04-fr
+- https://buckbeak99.medium.com/a-step-by-step-guide-to-configuring-simplesamlphp-bcd2dbd2b2b4
