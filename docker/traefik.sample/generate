@@ -1,0 +1,2 @@
+
+openssl req -x509 -out tls.sample.one.local.crt -keyout tls.sample.one.local.key -newkey rsa:2048 -nodes -sha256 -subj '/CN=tls.sample.one.local' -extensions EXT -config <( printf "[dn]\nCN=tls.sample.one.local\n[req]\ndistinguished_name = dn\n[EXT]\nsubjectAltName=DNS:tls.sample.one.local\nkeyUsage=digitalSignature\nextendedKeyUsage=serverAuth")

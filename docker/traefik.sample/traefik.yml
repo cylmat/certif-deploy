@@ -1,0 +1,38 @@
+# traefik/traefik.yml
+#
+# https://zestedesavoir.com/billets/3355/traefik-v2-https-ssl-en-localhost/
+#
+
+global:
+  sendAnonymousUsage: false
+
+api:
+  dashboard: true
+  # That means that the API is not exposed at all on entry point. 
+  # So you need to create a router that use api@internal service to access to the API
+  insecure: true
+
+providers:
+  docker:
+    endpoint: "unix:///var/run/docker.sock"
+    watch: true
+    exposedByDefault: false
+
+  file:
+    filename: /etc/traefik/config.yml
+    watch: true
+
+log:
+  level: INFO
+  format: common
+
+entryPoints:
+  http:
+    address: ":80"
+    # http:
+    #   redirections:
+    #     entryPoint:
+    #       to: https
+    #       scheme: https
+  https:
+    address: ":443"

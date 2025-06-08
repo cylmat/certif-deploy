@@ -1,0 +1,23 @@
+# traefik/config.yml
+#
+# https://zestedesavoir.com/billets/3355/traefik-v2-https-ssl-en-localhost/
+#
+
+# http:
+#   routers:
+#     traefik:
+#       rule: "Host(`traefik.docker.localhost`)"
+#       service: "api@internal"
+#       tls:
+#         domains:
+#           - main: "docker.localhost"
+#             sans:
+#               - "*.docker.localhost"
+#           - main: "domain.local"
+#             sans:
+#               - "*.domain.local"
+
+tls:
+  certificates:
+    - certFile: "/etc/certs/tls.sample.one.crt"
+      keyFile: "/etc/certs/tls.sample.one.key"
