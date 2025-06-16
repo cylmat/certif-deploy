@@ -1,13 +1,15 @@
 # ###
 # docker compose up --build -d
 # docker compose exec saml composer install -n
-# docker compose down
+# docker compose down --remove-orphans && docker compose up --build -d
 # ###
-# https://localhost     # SAML ssl
+# https://saml.idp.local:443    # SAML idp
+# https://saml.one.local:543    # SAML sp
+# https://saml.two.local:643    # SAML sp
 # ###
 # http://localhost:8080 # traefik
 # http://localhost:8085 # ldap: cn=admin,dc=example,dc=org / adminp
-# 
+#
 # saml => http://localhost/simplesaml/module.php/core/welcome
 # ###
 #
@@ -24,71 +26,75 @@ services:
     build:
       context: .
       dockerfile: ./docker/saml/Dockerfile
-      target: secure
     restart: always
     environment:
       # Set domain for let's encrypt
       DOMAIN: mydomain
       PGID: ${PGID}
       PUID: ${PUID}
+    ports: [443:443]
     volumes:
       # 000-default.conf not used
-      - ./docker/saml/apache/default-ssl-idp.conf:/etc/apache2/sites-enabled/default-ssl.conf
+      - ./docker/apache/default-ssl-idp.conf:/etc/apache2/sites-enabled/default-ssl.conf
+      - ./docker/certs/saml.idp.local.crt:/etc/apache2/saml.idp.local.crt
+      - ./docker/certs/saml.idp.local.key:/etc/apache2/saml.idp.local.key
       - ./saml/idp:/var/simplesamlphp_custom
-    labels:
-      - "traefik.http.routers.app.rule=Host(`saml-idp`)"
+    # labels:
+    #   - traefik.enable=true
+    #   # - traefik.http.routers.my-router.entrypoints=websecure
+    #   - traefik.http.routers.samlidp.entrypoints=https # mandatory for tls
+    #   - traefik.http.routers.samlidp.tls=true
+    #   - traefik.http.routers.samlidp.rule=Host(`saml.idp.local`)
+      # - traefik.http.routers.samlidp.tls.certresolver=mystore
 
   saml-sp1:
     build:
       context: .
       dockerfile: ./docker/saml/Dockerfile
-      target: secure
     restart: always
     environment:
       # Set domain for let's encrypt
       DOMAIN: mydomain
       PGID: ${PGID}
       PUID: ${PUID}
+    ports: [543:443]
     volumes:
       # 000-default.conf not used
-      - ./docker/saml/apache/default-ssl-sp1.conf:/etc/apache2/sites-enabled/default-ssl.conf
+      - ./docker/apache/default-ssl-sp1.conf:/etc/apache2/sites-enabled/default-ssl.conf
+      - ./docker/certs/saml.one.local.crt:/etc/apache2/saml.one.local.crt
+      - ./docker/certs/saml.one.local.key:/etc/apache2/saml.one.local.key
       - ./saml/sp:/var/simplesamlphp_custom
-    labels:
-      - "traefik.http.routers.app.rule=Host(`saml-sp1`)"
+    # labels:      
+    #   - traefik.enable=true
+    #   - traefik.http.routers.my-router.entrypoints=websecure
+    #   - traefik.http.routers.my-router.tls=true
+    #   - "traefik.http.routers.saml-sp1.rule=Host(`saml-sp1`)"
+    #   - "traefik.http.services.saml-sp1.loadbalancer.server.scheme=https"
 
   saml-sp2:
     build:
       context: .
       dockerfile: ./docker/saml/Dockerfile
-      target: secure
     restart: always
     environment:
       # Set domain for let's encrypt
       DOMAIN: mydomain
       PGID: ${PGID}
       PUID: ${PUID}
+    ports: [643:443]
     volumes:
       # 000-default.conf not used
-      - ./docker/saml/apache/default-ssl.conf:/etc/apache2/sites-enabled/default-ssl.conf
+      - ./docker/apache/default-ssl-sp2.conf:/etc/apache2/sites-enabled/default-ssl.conf
+      - ./docker/certs/saml.two.local.crt:/etc/apache2/saml.two.local.crt
+      - ./docker/certs/saml.two.local.key:/etc/apache2/saml.two.local.key
       - ./saml/sp:/var/simplesamlphp_custom
-    labels:
-      - "traefik.http.routers.app.rule=Host(`saml-sp2`)"
-
-  traefik:
-    image: traefik:v3
-    restart: always
-    command:
-      --api.insecure=true
-      --providers.docker
-      # --entrypoints.websecure.address=:443  # doesn't works for know ?
-    ports:
-      # - "80:80"
-      - "443:443"
-      # The Web UI (enabled by --api.insecure=true)
-      - "8080:8080"
-    volumes:
-      # So that Traefik can listen to the Docker events
-      - /var/run/docker.sock:/var/run/docker.sock
+      # - ./docker/traefik.sample/index_s.php:/var/truc/index.php
+    # labels:
+    #   - traefik.enable=true
+    #   - traefik.http.routers.my-router.entrypoints=websecure
+    #   - traefik.http.routers.my-router.tls=true
+    #   - "traefik.http.routers.saml-sp2.rule=Host(`saml-sp2`)"
+    #   - "traefik.http.services.saml-sp1.loadbalancer.server.scheme=https"
 
   openldap:
     image: osixia/openldap:1.5.0
@@ -120,3 +126,30 @@ services:
       - PHPLDAPADMIN_HTTPS=false
     depends_on:
       - openldap
+
+
+
+  # traefik:
+  #   image: traefik:v2
+  #   restart: always
+  #   command:
+  #     --api.insecure=true
+  #     --providers.docker=true
+  #     # --entrypoints.websecure.address=:443
+  #     # --certificatesresolvers.le.acme.tlschallenge=true
+  #     # --entrypoints.websecure.address=:443  # doesn't works for know ?
+  #   ports:
+  #     - "80:80"
+  #     - "443:443"
+  #     # The Web UI (enabled by --api.insecure=true)
+  #     - "8080:8080"
+  #   volumes:
+  #     # So that Traefik can listen to the Docker events
+  #     - /var/run/docker.sock:/var/run/docker.sock
+  #     # On map la conf statique dans le conteneur
+  #     - ./docker/traefik/traefik.yml:/etc/traefik/traefik.yml:ro
+  #     # On map la conf dynamique statique dans le conteneur
+  #     - ./docker/traefik/config.yml:/etc/traefik/config.yml:ro
+  #     # On map les certificats dans le conteneur
+  #     # on localhost, generated with "openssl req -x509 ......"
+  #     - ./docker/certs:/etc/certs:ro

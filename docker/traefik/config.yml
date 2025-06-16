@@ -3,21 +3,40 @@
 # https://zestedesavoir.com/billets/3355/traefik-v2-https-ssl-en-localhost/
 #
 
-# http:
-#   routers:
-#     traefik:
-#       rule: "Host(`traefik.docker.localhost`)"
-#       service: "api@internal"
-#       tls:
-#         domains:
-#           - main: "docker.localhost"
-#             sans:
-#               - "*.docker.localhost"
-#           - main: "domain.local"
-#             sans:
-#               - "*.domain.local"
+http:
+  routers:
+    traefik:
+      rule: "Host(`traefik.docker.localhost`)"
+      service: "api@internal"
+      tls:
+        domains:
+          - main: "docker.localhost"
+            sans:
+              - "*.docker.localhost"
+          - main: "domain.local"
+            sans:
+              - "*.domain.local"
+    samlidp:
+      rule: "Host(`saml.idp.local`)"
+      service: "myService"
+      tls:
+        domains:
+          - main: "saml.idp.local"
+            sans:
+              - "*.saml.idp.local"
+
+  services:
+    myService:
+      loadBalancer:
+        servers:
+          - url: https://saml.idp.local
 
 tls:
   certificates:
-    - certFile: "/etc/certs/localhost.crt"
-      keyFile: "/etc/certs/localhost.key"
+    - certFile: "/etc/certs/saml.idp.local.crt"
+      keyFile: "/etc/certs/saml.idp.local.key"
+
+
+  # certificatesResolvers:
+  #   myresolver:
+  #     caServer: /etc/certs/saml.idp.local.crt

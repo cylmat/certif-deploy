@@ -1,0 +1,5 @@
+
+openssl req -x509 -out saml.two.local.crt -keyout saml.two.local.key \
+-newkey rsa:2048 -nodes -sha256 \
+-subj '/CN=saml.two.local' -extensions EXT -config <( \
+printf "[dn]\nCN=saml.two.local\n[req]\ndistinguished_name = dn\n[EXT]\nsubjectAltName=DNS:saml.two.local\nkeyUsage=digitalSignature\nextendedKeyUsage=serverAuth")

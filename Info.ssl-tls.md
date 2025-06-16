@@ -56,6 +56,12 @@ cannot validate certificate for 172.18.0.3 because it doesn't contain any IP SAN
 
 soluce (for internal or dev)
 => - "traefik.http.services.secure-service.loadbalancer.server.insecureSkipVerify=true"
+
+or 
+
+Update the TLS certificate in the backend container to include the Docker IP or hostname in the SAN.
+(-subj "/CN=myservice" -addext "subjectAltName=IP:172.18.0.3") 
+or (-addext "subjectAltName=DNS:https-service")
 ```
 
 

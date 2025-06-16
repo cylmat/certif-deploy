@@ -1,0 +1,56 @@
+# traefik/config.yml
+#
+# https://zestedesavoir.com/billets/3355/traefik-v2-https-ssl-en-localhost/
+#
+
+# use  - "traefik.http.routers.traefik=true"
+# http:
+  # routers:
+    # myservice-router:
+    #   rule: "Host(`tls.sample.one.local`)"
+    #   entryPoints:
+    #     - https
+    #   service: my-service
+      # tls:
+        # Optional, lets Traefik generate or use certs
+        # certResolver: myresolver
+      # traefik:
+      #   rule: "Host(`traefik.docker.localhost`)"
+      #   service: "api@internal"
+      #   tls:
+      #     domains:
+      #       - main: "docker.localhost"
+      #         sans:
+      #           - "*.docker.localhost"
+      #       - main: "domain.local"
+      #         sans:
+      #           - "*.domain.local"
+
+  # ###
+  # DOC
+  # https://doc.traefik.io/traefik/v2.0/routing/services
+  # ###
+  # services:
+  #   my-service:
+  #     loadBalancer:
+  #       servers:
+  #         - url: "https://tls-sample1:443"
+  #       passHostHeader: true
+  #       scheme: https
+        # Optional: disable certificate validation if needed
+        # (not recommended for production)
+        # insecureSkipVerify: true
+
+tls:
+  certificates:
+    - certFile: "/etc/certs/tls.sample.one.local.crt"
+      keyFile: "/etc/certs/tls.sample.one.local.key"
+
+# # If you're using Let's Encrypt with Traefik:
+# certificatesResolvers:
+#   myresolver:
+#     acme:
+#       email: your@email.com
+#       storage: /etc/traefik/acme.json
+#       httpChallenge:
+#         entryPoint: web

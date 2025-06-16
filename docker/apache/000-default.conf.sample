@@ -6,9 +6,9 @@
     # DocumentRoot /var/www/service.example.com
     
 
-    ###################################
+    ##################################
     # NOT USED, ACTUALLY USE SSL 443 #
-    ###################################
+    ##################################
 
     # DocumentRoot /var/simplesamlphp/public
     # ServerAdmin webmaster@localhost

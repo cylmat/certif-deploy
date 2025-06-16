@@ -1,6 +1,8 @@
 # ###
 # cd docker/traefik.sample
-# docker compose down --remove-orphans && docker compose -f docker-compose-traefik-sample.yml up --build -d
+# docker compose -f docker-compose-traefik-sample.yml down --remove-orphans && docker compose -f docker-compose-traefik-sample.yml up --build -d
+#
+# (Entrypoints 80:443) Traefik certs => (Services & serversTransport) service.loadbalancer.server.scheme=https
 #
 # https://zestedesavoir.com/billets/3355/traefik-v2-https-ssl-en-localhost/
 # ###
@@ -16,39 +18,38 @@ services:
       - ./default-ssl.conf:/etc/apache2/sites-enabled/default-ssl.conf
       - ./tls.sample.one.local.crt:/etc/ssl/certs/tls.sample.one.local.crt
       - ./tls.sample.one.local.key:/etc/ssl/private/tls.sample.one.local.key
-    ports: 
-      - 80:80
-      - 443:443
-    # labels:
-      # - "traefik.enable=true"
-      # - "traefik.http.routers.tlssampleone.rule=Host(`tls-sample.one.local`)"
-      # - "traefik.http.routers.tlssampleone.tls=true"
+    # ports: 
+    #   - 80:80
+    #   - 443:443
+    labels:
+      # DOC: https://doc.traefik.io/traefik/v2.0/routing/services/#servers
+      - "traefik.enable=true"
+      - "traefik.http.services.myservice-tls1.loadbalancer.server.port=443"
+      - "traefik.http.services.myservice-tls1.loadbalancer.server.url=tls-sample1"
+      - "traefik.http.routers.tlssampleone.rule=Host(`tls.sample.one.local`)"
+      - "traefik.http.routers.tlssampleone.tls=true"
+      # Reach service https's secure DocumentRoot
+      - "traefik.http.services.myservice-tls1.loadbalancer.server.scheme=https" # Tells Traefik to use HTTPS when proxying.
 
-  # https://doc.traefik.io/traefik/migration/v2-to-v3/
-  # traefik:
-  #   image: traefik:v2
-  #   command:
-  #     #- "--log.level=DEBUG"
-  #     - "--api.insecure=true"
-  #     - "--providers.docker=true"
-  #     # - "--providers.docker.exposedbydefault=false"
-  #     # - "--entryPoints.web.address=:80"
-  #   ports:
-  #     - "80:80"
-  #     - "443:443"
-  #     - "8080:8080"
-  #   volumes:
-  #     - "/var/run/docker.sock:/var/run/docker.sock:ro"
-  #     # On map la conf statique dans le conteneur
-  #     # - ./traefik.yml:/etc/traefik/traefik.yml:ro
-  #     # On map la conf dynamique statique dans le conteneur
-  #     # - ./traefik.config.yml:/etc/traefik/config.yml:ro
-  #     # On map les certificats dans le conteneur
-  #     # on localhost, generated with "openssl req -x509 ......"
-  #     - .:/etc/certs:ro
-
-  #     # # Utilise la configuration du routeur "traefik" définie dans le fichier de configuration dynamique : ./traefik/config.yml
-  #     # - "traefik.http.routers.traefik=true"
+  # https://doc.traefik.io/traefik/migration/v2-to-v3
+  traefik:
+    image: traefik:v2
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      # - "--entrypoints.web.address=:80"
+      # - "--entrypoints.websecure.address=:443"
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8080:8080"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      # statique 
+      - ./traefik.yml:/etc/traefik/traefik.yml:ro
+      # dynamique
+      - ./traefik.d.config.yml:/etc/traefik/config.yml:ro
+      - .:/etc/certs:ro
 
   # whoami:
   #   image: "traefik/whoami"
@@ -62,10 +63,3 @@ services:
   #     # Si le port est différent de 80, utilisez le service suivant:
   #     # - "traefik.http.services.<service_name>.loadbalancer.server.port=<port>"
   #     # - "traefik.http.routers.whoami.entrypoints=web"
-
-  # hello-world:
-  #   image: strm/helloworld-http
-  #   labels:
-  #     - "traefik.enable=true"
-  #     - "traefik.http.routers.helloworld.rule=Host(`hello-world.local`)"
-  #     - "traefik.http.routers.helloworld.tls=true"

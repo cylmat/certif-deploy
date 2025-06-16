@@ -47,12 +47,10 @@ RUN chmod 777 -R /var/log
 WORKDIR /var/simplesamlphp
 
 
-
 # ### #
 # SSL #
 # ### #
 
-FROM base AS secure
 
 # Activate SSL
 # Install /etc/ssl/certs/ssl-cert-snakeoil.pem
@@ -61,15 +59,10 @@ RUN a2enmod ssl
 RUN a2ensite default-ssl
 # RUN a2dissite default -> Disable "http" site, or use "Redirect permanent / https://server.domain.fr?"
 
-# RUN sed -i -e "s#DocumentRoot /var/www/html#DocumentRoot /var/www/html/public#" /etc/apache2/sites-enabled/000-default.conf
-# RUN sed -i -e "s#DocumentRoot /var/www/html#DocumentRoot /var/www/html/public#" /etc/apache2/sites-enabled/default-ssl.conf
+RUN mv /etc/apache2/sites-enabled/000-default.conf /tmp/000-default.conf.backup
 
-RUN openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
-    -sha256 -out /etc/apache2/server.crt -keyout /etc/apache2/server.key \
-    -subj "/C=fr/CN=www.generated.com"
-RUN chmod 440 /etc/apache2/server.crt
 
-# Update /etc/apache2/sites-available/default-ssl.conf
-# RUN sed -i -e "s#SSLCertificateFile .*#SSLCertificateFile /etc/apache2/server.crt#" /etc/apache2/sites-enabled/default-ssl.conf
-# RUN sed -i -e "s#SSLCertificateKeyFile .*#SSLCertificateKeyFile /etc/apache2/server.key#" /etc/apache2/sites-enabled/default-ssl.conf
-
+RUN a2query -s
+RUN apachectl -M
+RUN apachectl configtest
+RUN apache2ctl -S
