@@ -1,0 +1,2 @@
+
+openssl req -x509 -out saml.idp.local.crt -keyout saml.idp.local.key -newkey rsa:2048 -nodes -sha256 -subj '/CN=saml.idp.local' -extensions EXT -config <( printf "[dn]\nCN=saml.idp.local\n[req]\ndistinguished_name = dn\n[EXT]\nsubjectAltName=DNS:saml.idp.local\nkeyUsage=digitalSignature\nextendedKeyUsage=serverAuth")

@@ -11,20 +11,6 @@ $config = [
     /*******************************
      | BASIC CONFIGURATION OPTIONS |
      *******************************/
-    'baseurlpath' => 'simplesaml/',
-    'auth.adminpassword' => 'admin1', // user: admin
-
-    'technicalcontact_name' => 'Administrator',
-    'technicalcontact_email' => 'na123sample@example.org',
-
-    'database.dsn' => 'mysql:host=localhost;dbname=saml',
-    'database.username' => 'simplesamlphp',
-    'database.password' => 'secret',
-    'database.options' => [],
-
-    'session.cookie.secure' => true,
-    'enable.saml20-idp' => true, /// ENABLE IDENTITY PROVIDER
-
 
     /*
      * Setup the following parameters to match your installation.
@@ -45,7 +31,7 @@ $config = [
      * external url, no matter where you come from (direct access or via the
      * reverse proxy).
      */
-    // 'baseurlpath' => 'simplesaml/',
+    'baseurlpath' => 'simplesaml/',
 
     /*
      * The 'application' configuration array groups a set configuration options
@@ -72,7 +58,7 @@ $config = [
     /*
      * The following settings are *filesystem paths* which define where
      * SimpleSAMLphp can find or write the following things:
-     * - 'cachedir': Where SimpleSAMLphp can write its cache.
+     * - 'cachedir': Where SimpleSAMLphp can write its cache. 
      * - 'loggingdir': Where to write logs. MUST be set to NULL when using a logging
      *                 handler other than `file`.
      * - 'datadir': Storage of general data.
@@ -82,7 +68,7 @@ $config = [
      * root directory.
      */
     'cachedir' => '/var/cache/simplesamlphp',
-    'loggingdir' => '/var/log/',
+    //'loggingdir' => '/var/log/',
     //'datadir' => '/var/data/',
     //'tempdir' => '/tmp/simplesamlphp',
 
@@ -141,8 +127,8 @@ $config = [
      * The email address will be used as the recipient address for error reports, and
      * also as the technical contact in generated metadata.
      */
-    // 'technicalcontact_name' => 'Administrator',
-    // 'technicalcontact_email' => 'na123sample@example.org',
+    'technicalcontact_name' => 'Administrator',
+    'technicalcontact_email' => 'na@example.org',
 
     /*
      * (Optional) The method by which email is delivered.  Defaults to mail which utilizes the
@@ -187,7 +173,7 @@ $config = [
      *
      * See this page for a list of valid timezones: http://php.net/manual/en/timezones.php
      */
-    'timezone' => 'Europe/Amsterdam',
+    'timezone' => null,
 
 
 
@@ -203,7 +189,7 @@ $config = [
      * A possible way to generate a random salt is by running the following command from a unix shell:
      * LC_ALL=C tr -c -d '0123456789abcdefghijklmnopqrstuvwxyz' </dev/urandom | dd bs=32 count=1 2>/dev/null;echo
      */
-    'secretsalt' => 'nivAROkTOMczp2IYRwNiAT40DRxRFP2PgScCmK6FOqE',
+    'secretsalt' => 'defaultsecretsalt',
 
     /*
      * This password must be kept secret, and modified from the default value 123.
@@ -215,7 +201,7 @@ $config = [
      * ansible.builtin.password_hash(hashtype='blowfish', ident='2y', rounds=13)
      * to generate this hashed value.
      */
-    // 'auth.adminpassword' => '123',
+    'auth.adminpassword' => '123',
 
     /*
      * Set this option to true if you want to require administrator password to access the metadata.
@@ -497,14 +483,14 @@ $config = [
      * Ensure that you have the required PDO database driver installed
      * for your connection string.
      */
-    // 'database.dsn' => 'mysql:host=localhost;dbname=saml',
+    'database.dsn' => 'mysql:host=localhost;dbname=saml',
 
     /*
      * SQL database credentials
      */
-    // 'database.username' => 'simplesamlphp',
-    // 'database.password' => 'secret',
-    // 'database.options' => [],
+    'database.username' => 'simplesamlphp',
+    'database.password' => 'secret',
+    'database.options' => [],
 
     /*
      * (Optional) Table prefix
@@ -553,7 +539,7 @@ $config = [
      * one of the functionalities below, but in some cases you could run multiple functionalities.
      * In example when you are setting up a federation bridge.
      */
-    // 'enable.saml20-idp' => false,
+    'enable.saml20-idp' => false,
     'enable.adfs-idp' => false,
 
 
@@ -575,10 +561,10 @@ $config = [
      */
 
     'module.enable' => [
-        'exampleauth' => true,
+        'exampleauth' => false,
         'core' => true,
         'admin' => true,
-        'saml' => true,
+        'saml' => true
     ],
 
 
@@ -648,7 +634,7 @@ $config = [
      *
      * If unset, SimpleSAMLphp will try to automatically determine the right value
      */
-    // 'session.cookie.secure' => true,
+    //'session.cookie.secure' => true,
 
     /*
      * Set the SameSite attribute in the cookie.
@@ -840,7 +826,7 @@ $config = [
     'language.available' => [
         'en', 'no', 'nn', 'se', 'da', 'de', 'sv', 'fi', 'es', 'ca', 'fr', 'it', 'nl', 'lb',
         'cs', 'sk', 'sl', 'lt', 'hr', 'hu', 'pl', 'pt', 'pt_BR', 'tr', 'ja', 'zh', 'zh_TW',
-        'ru', 'et', 'he', 'id', 'sr', 'lv', 'ro', 'eu', 'el', 'af', 'zu', 'xh', 'st',
+        'ru', 'et', 'he', 'id', 'sr', 'lv', 'ro', 'eu', 'el', 'af', 'zu', 'xh', 'st'
     ],
     'language.rtl' => ['ar', 'dv', 'fa', 'ur', 'he'],
     'language.default' => 'en',
@@ -914,14 +900,6 @@ $config = [
      * set it to false.
      */
     'template.auto_reload' => false,
-
-
-    /*
-     * Set the 'template.debug' to true to enable debugging for Twig templates.
-     * This is useful during development as it provides better error messages.
-     * Defaults to false.
-     */
-    //'template.debug' => false,
 
     /*
      * Set this option to true to indicate that your installation of SimpleSAMLphp
@@ -1151,21 +1129,6 @@ $config = [
      * 'metadata.sources' => [
      *     ['type' => 'flatfile'],
      *     ['type' => 'xml', 'file' => 'idp.example.org-idpMeta.xml'],
-     * ],
-     *
-     * This example defines a remote xml-file with optional connection context.
-     * See PHP documentation for possible context options: https://www.php.net/manual/en/context.php
-     *
-     * 'metadata.sources' => [
-     *     [
-     *         'type' => 'xml',
-     *         'url' => 'https://example.org/idp.example.org-idpMeta.xml',
-     *         'context' => [
-     *             'ssl' => [
-     *                 'verify_peer' => true,
-     *             ],
-     *         ],
-     *     ],
      * ],
      *
      * This example defines an mdq source.

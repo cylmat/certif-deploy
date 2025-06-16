@@ -21,14 +21,13 @@ $config = [
         'core:AdminPassword',
     ],
 
-
     // An authentication source which can authenticate against SAML 2.0 IdPs.
     'default-sp' => [
         'saml:SP',
 
         // The entity ID of this SP.
         // 'entityID' => 'https://myapp.example.org/',
-        'entityID' => 'https://localhost/',
+        'entityID' => 'https://saml.idp.local/',
 
         // The entity ID of the IdP this SP should contact.
         // Can be NULL/unset, in which case the user will be shown a list of available IdPs.
@@ -67,14 +66,22 @@ $config = [
         ],
         */
     ],
+    
+    // 'sp2' => [
+    //     'saml:SP',
+    //     'entityID' => 'https://myotherapp.example.org/',
+    // ],
 
-    'used-userpass' => [
+    'sp-userpass' => [
         'exampleauth:UserPass', 
 
         // Give the user an option to save their username for future login attempts
         // And when enabled, what should the default be, to save the username or not
         //'remember.username.enabled' => false,
         //'remember.username.checked' => false,
+
+        'certificate' => 'cert/saml.crt',
+        'privatekey' => 'cert/saml.pem',
 
         'users' => [
             'user:pass' => [
@@ -90,8 +97,31 @@ $config = [
                 'eduPersonAffiliation' => ['member', 'employee'],
             ],
         ],
+
+         /*
+         * The entity ID of the IdP this should SP should contact.
+         * Can be NULL/unset, in which case the user will be shown a list of available IdPs.
+         */
+        'idp' => 'https://saml.idp.local', // from saml/custom/metadata/saml20-idp-remote.php
     ],
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
 
     // 'used-static' => [ // must enable 'module.enable' => [ 'exampleauth'
     //     'exampleauth:StaticSource',
