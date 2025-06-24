@@ -3,12 +3,14 @@
 # docker compose exec saml composer install -n
 # docker compose down --remove-orphans && docker compose up --build -d
 # ###
-# https://saml.idp.local:443    # SAML idp
+# https://localhost:80          # My App
 # https://saml.one.local:543    # SAML sp
 # https://saml.two.local:643    # SAML sp
+# https://saml.idp.local:743    # SAML idp
 # ###
-# http://localhost:8080 # traefik
-# http://localhost:8085 # ldap: cn=admin,dc=example,dc=org / adminp
+# http://localhost:8080/admin   # keycloak   admin / admin
+# http://localhost:8085         # ldap: cn=admin,dc=example,dc=org / adminp
+# http://localhost:8090         # traefik
 #
 # saml => http://localhost/simplesaml/module.php/core/welcome
 # ###
@@ -17,7 +19,20 @@
 # to have multi containers on https (443), use traefik
 # ###
 
+volumes:
+  keycloak_data:
+
 services:
+
+  myapp:
+    image: php:8.3-apache
+    restart: always
+    environment:
+      PGID: ${PGID}
+      PUID: ${PUID}
+    ports: [80:80, 443:443]
+    volumes:
+      - ./myapp/index.php:/var/www/html/index.php
 
   # 
   # docker compose exec saml cd /var/www && composer install -n
@@ -32,7 +47,7 @@ services:
       DOMAIN: mydomain
       PGID: ${PGID}
       PUID: ${PUID}
-    ports: [443:443]
+    ports: [743:443]
     volumes:
       # 000-default.conf not used
       - ./docker/apache/default-ssl-idp.conf:/etc/apache2/sites-enabled/default-ssl.conf
@@ -96,6 +111,19 @@ services:
     #   - "traefik.http.routers.saml-sp2.rule=Host(`saml-sp2`)"
     #   - "traefik.http.services.saml-sp1.loadbalancer.server.scheme=https"
 
+  # https://www.keycloak.org/getting-started/getting-started-docker
+  # go to http://localhost:8090/admin
+  # Take LONG time to load !
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.2
+    environment:
+      - KC_BOOTSTRAP_ADMIN_USERNAME=admin
+      - KC_BOOTSTRAP_ADMIN_PASSWORD=admin
+    ports: [8080:8080]
+    volumes:
+      - keycloak_data:/opt/keycloak/data
+    command: ["start-dev"]
+
   openldap:
     image: osixia/openldap:1.5.0
     restart: unless-stopped
@@ -142,7 +170,7 @@ services:
   #     - "80:80"
   #     - "443:443"
   #     # The Web UI (enabled by --api.insecure=true)
-  #     - "8080:8080"
+  #     - "8090:8080"
   #   volumes:
   #     # So that Traefik can listen to the Docker events
   #     - /var/run/docker.sock:/var/run/docker.sock
